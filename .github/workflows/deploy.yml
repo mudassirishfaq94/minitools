@@ -31,6 +31,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Generate static SEO pages, sitemap.xml and robots.txt
+        env:
+          SITE_URL: https://mudassirishfaq94.github.io/minitools
+        run: node scripts/prerender.mjs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

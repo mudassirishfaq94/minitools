@@ -1,0 +1,12 @@
+/*
+  Security headers for static hosts that support _headers (Netlify, Cloudflare Pages).
+  GitHub Pages does not read this file — the CSP is also set via <meta> in index.html.
+*/
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' ws:; base-uri 'self'; form-action 'self'
+*/

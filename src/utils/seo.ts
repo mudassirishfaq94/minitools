@@ -29,6 +29,22 @@ export function absoluteUrl(path: string): string {
   return `${origin}${pathname}#${clean || "/"}`;
 }
 
+/** Clean (hash-free) absolute URL used for canonical, og:url and sitemaps. */
+export function cleanUrl(path: string): string {
+  if (typeof window === "undefined") return path;
+  const { origin, pathname } = window.location;
+  const clean = path === "/" ? "" : path;
+  return `${origin}${pathname}${clean}`;
+}
+
+/** Resolves a deploy-time asset (favicon, og-image) relative to the page. */
+export function assetUrl(asset: string): string {
+  if (typeof window === "undefined") return asset;
+  const { origin, pathname } = window.location;
+  const dir = pathname.endsWith("/") ? pathname : `${pathname.split("/").slice(0, -1).join("/")}/`;
+  return `${origin}${dir}${asset}`;
+}
+
 function upsertMeta(selector: string, attribute: "name" | "property", key: string, content: string) {
   let element = document.head.querySelector<HTMLMetaElement>(selector);
   if (!element) {
@@ -70,6 +86,7 @@ export function applySeo({ title, description, path, structuredData, keywords }:
   if (typeof document === "undefined") return;
 
   const url = absoluteUrl(path);
+  const canonical = cleanUrl(path);
 
   document.title = title;
   upsertMeta('meta[name="description"]', "name", "description", description);
@@ -81,14 +98,16 @@ export function applySeo({ title, description, path, structuredData, keywords }:
   upsertMeta('meta[property="og:title"]', "property", "og:title", title);
   upsertMeta('meta[property="og:description"]', "property", "og:description", description);
   upsertMeta('meta[property="og:type"]', "property", "og:type", "website");
-  upsertMeta('meta[property="og:url"]', "property", "og:url", url);
+  upsertMeta('meta[property="og:url"]', "property", "og:url", canonical);
   upsertMeta('meta[property="og:site_name"]', "property", "og:site_name", SITE_NAME);
+  upsertMeta('meta[property="og:image"]', "property", "og:image", assetUrl("og-image.png"));
 
   upsertMeta('meta[name="twitter:card"]', "name", "twitter:card", "summary_large_image");
   upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
   upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
+  upsertMeta('meta[name="twitter:image"]', "name", "twitter:image", assetUrl("og-image.png"));
 
-  upsertLink("canonical", url);
+  upsertLink("canonical", canonical);
   setStructuredData(structuredData);
 }
 

@@ -1,0 +1,23 @@
+{
+  "name": "Toolstack — Free Online Mini Tools",
+  "short_name": "Toolstack",
+  "description": "54 free online mini tools for developers, writers and designers. Converters, calculators, text utilities, JSON and image tools. Runs entirely in your browser.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6d28d9",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
