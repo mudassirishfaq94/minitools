@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toolstack — README Preview</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-dark.min.css">
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #0d1117;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      color: #e6edf3;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Page chrome: subtle header + footer */
+    .preview-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: rgba(13, 17, 23, 0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #21262d;
+    }
+
+    .preview-header .logo {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .preview-header .title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .preview-header .subtitle {
+      font-size: 12px;
+      color: #8b949e;
+    }
+
+    .preview-header .spacer { flex: 1; }
+
+    .preview-header .badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: #7ee787;
+      background: rgba(46, 160, 67, 0.15);
+      border: 1px solid rgba(46, 160, 67, 0.4);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    /* Markdown content area */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    .markdown-body {
+      background: transparent;
+      font-size: 16px;
+    }
+
+    .markdown-body img { max-width: 100%; }
+
+    /* Header anchor spacing (so sticky header doesn't cover headings) */
+    .markdown-body h1, .markdown-body h2, .markdown-body h3,
+    .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+      scroll-margin-top: 70px;
+    }
+
+    /* Kbd styling inside tables */
+    .markdown-body kbd {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    /* Loading + error states */
+    .state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      min-height: 50vh;
+      text-align: center;
+      color: #8b949e;
+    }
+
+    .state.hidden { display: none; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #21262d;
+      border-top-color: #58a6ff;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .state.error .icon { font-size: 36px; }
+    .state.error h2 { color: #f85149; margin: 0; }
+    .state.error p { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; }
+
+    .preview-footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #6e7681;
+      border-top: 1px solid #21262d;
+    }
+  </style>
+</head>
+<body>
+  <header class="preview-header">
+    <span class="logo">🧰</span>
+    <span class="title">Toolstack</span>
+    <span class="subtitle">— README preview</span>
+    <span class="spacer"></span>
+    <span class="badge">Local preview</span>
+  </header>
+
+  <div class="container">
+    <!-- Loading state -->
+    <div class="state" id="loading">
+      <div class="spinner"></div>
+      <p>Loading README.md…</p>
+    </div>
+
+    <!-- Error state -->
+    <div class="state error hidden" id="error">
+      <div class="icon">⚠️</div>
+      <h2>Could not load README.md</h2>
+      <p id="error-message"></p>
+    </div>
+
+    <!-- Rendered markdown -->
+    <div class="markdown-body" id="content"></div>
+  </div>
+
+  <footer class="preview-footer">
+    Generated from <code>README.md</code> at <span id="generated-at"></span> · Rendered locally with
+    <a href="https://github.com/markedjs/marked" style="color:#58a6ff">marked</a>
+  </footer>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function show(state, message) {
+      $('loading').classList.toggle('hidden', state !== 'loading');
+      $('error').classList.toggle('hidden', state !== 'error');
+      $('content').classList.toggle('hidden', state === 'loading' || state === 'error');
+      if (state === 'error') {
+        $('error-message').textContent = message || 'Unknown error';
+      }
+    }
+
+    $('generated-at').textContent = new Date().toLocaleString();
+
+    fetch('README.md', { cache: 'no-store' })
+      .then((r) => {
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + r.statusText);
+        return r.text();
+      })
+      .then((md) => {
+        $('content').innerHTML = marked.parse(md);
+        show('content');
+      })
+      .catch((err) => {
+        show('error', err.message);
+      });
+  </script>
+</body>
+</html>
